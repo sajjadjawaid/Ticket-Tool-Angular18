@@ -1,0 +1,125 @@
+<div
+  class="flex flex-col md:flex-row justify-center w-full p-4 space-y-4 md:space-y-0 md:space-x-4 bg-gray-200"
+>
+  <!-- First Table: Department List -->
+  <div class="flex-1 overflow-x-auto">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <h2
+        class="text-xl font-semibold p-4 bg-gradient-to-r from-indigo-600 to-blue-500 text-white rounded-t-lg"
+      >
+        Department List
+      </h2>
+      <table class="min-w-full table-auto border-collapse">
+        <thead class="bg-gray-800 text-white">
+          <tr>
+            <th class="py-3 px-4 text-left text-sm font-medium">Sr No</th>
+            <th class="py-3 px-4 text-left font-medium">Department Name</th>
+            <th class="py-3 px-4 text-left text-sm font-medium">
+              Created Date
+            </th>
+            <th class="py-3 px-4 text-center text-sm font-medium">Action</th>
+          </tr>
+        </thead>
+        <tbody class="bg-gray-100 divide-y divide-gray-200">
+          @for (item of deptList; track $index) {
+          <tr class="hover:bg-gray-300 transition duration-300 cursor-pointer">
+            <td class="py-3 px-4 text-sm">{{ $index + 1 }}</td>
+            <td class="py-3 px-4 text-sm font-semibold text-gray-800">
+              {{ item.deptName | uppercase }}
+            </td>
+            <td class="py-3 px-4 text-sm">
+              {{ item.createdDate | date : "mediumDate" }}
+            </td>
+            <td class="py-2 px-2 md:px-4 flex space-x-3 justify-center">
+              <button class="btn btn-solid-warning" (click)="onEdit(item)">
+                Edit
+              </button>
+              <button
+                (click)="deleteDept(item.deptId)"
+                class="btn btn-solid-error"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Second Table: Create New Department -->
+  <div class="max-w-lg mx-auto overflow-x-auto">
+    <div class="bg-white rounded-lg shadow-md">
+      <h2
+        class="text-xl font-semibold p-4 bg-gradient-to-r from-green-600 to-teal-500 text-white rounded-t-lg shadow-md"
+      >
+        Create New Department
+      </h2>
+      <form>
+        <div class="min-w-full bg-gray-100">
+          <div>
+            <div class="hover:bg-gray-200 transition duration-300">
+              <div class="py-2 px-2 md:px-4 flex justify-between">
+                <label
+                  class="w-full md:w-1/2 py-2 px-2 text-gray-700 font-bold"
+                  for="departmentName"
+                >
+                  Department Name
+                  <input
+                    type="text"
+                    id="departmentName"
+                    name="departmentName"
+                    [(ngModel)]="newDeptObj.deptName"
+                    placeholder="Enter Department Name"
+                    class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                    required
+                  />
+                </label>
+                @if(this.newDeptObj.deptId == 0){
+                <label
+                  class="w-full md:w-1/2 py-2 px-2 text-gray-700 font-bold"
+                  for="dateOfCreation "
+                >
+                  Date of Creation
+                  <input
+                    type="date"
+                    id="dateOfCreation"
+                    name="dateOfCreation"
+                    [(ngModel)]="newDeptObj.createdDate"
+                    class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                    required
+                  />
+                </label>
+                }
+              </div>
+            </div>
+          </div>
+          <!-- Buttons Row -->
+          <div class="py-2 px-2 md:px-4 text-right">
+            <div class="flex justify-end space-x-4">
+              <button type="reset" class="btn btn-outline-gray">Reset</button>
+              @if(this.newDeptObj.deptId == 0){
+              <button
+                type="submit"
+                class="btn btn-outline-primary"
+                (click)="onSubmit()"
+              >
+                Submit
+              </button>
+              } @else{
+              <button
+                type="submit"
+                (click)="updateDept()"
+                class="btn btn-solid-success"
+              >
+                Update
+              </button>
+              }
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,120 @@
+<div class="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg">
+  <nav class="flex items-center justify-between p-4 max-w-screen-xl mx-auto">
+    <div class="navbar-start">
+      <a class="text-white text-2xl font-bold">Ticketing Tool</a>
+    </div>
+    <div class="navbar-center hidden md:flex space-x-4">
+      <div class="relative group">
+        <a class="nav-item" routerLink="dashboard">Dashboard</a>
+        <div class="hover-box"></div>
+      </div>
+      <div class="relative group">
+        <a class="nav-item" routerLink="department">Department</a>
+        <div class="hover-box"></div>
+      </div>
+      <div class="relative group flex justify-start">
+        <a class="nav-item text-center" routerLink="parent-category"
+          >Parent Category</a
+        >
+        <div class="hover-box"></div>
+      </div>
+      <div class="relative group flex justify-start">
+        <a class="nav-item text-center" routerLink="child-category"
+          >Child Category</a
+        >
+        <div class="hover-box"></div>
+      </div>
+      <div class="relative group flex justify-start">
+        <a class="nav-item text-center" routerLink="employee">Employee</a>
+        <div class="hover-box"></div>
+      </div>
+    </div>
+    <div class="navbar-end">
+      <a
+        class="text-white px-4 py-2 rounded-md bg-indigo-500 hover:bg-indigo-400 transition duration-300 cursor-pointer"
+        (click)="onLogOut()"
+        >Log Out</a
+      >
+      <button class="md:hidden text-white focus:outline-none" id="menu-toggle">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-6 h-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 6h16M4 12h16m-7 6h7"
+          />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="md:hidden hidden" id="mobile-menu">
+    <a href="#" class="block px-4 py-2 text-white hover:bg-indigo-500">Home</a>
+    <a href="#" class="block px-4 py-2 text-white hover:bg-indigo-500">About</a>
+    <a href="#" class="block px-4 py-2 text-white hover:bg-indigo-500"
+      >Contact</a
+    >
+  </div>
+</div>
+
+<style>
+  .nav-item {
+    position: relative;
+    color: white;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s;
+  }
+
+  .nav-item:hover {
+    color: #e0e7ff; /* Light color on hover */
+  }
+
+  .hover-box {
+    position: absolute;
+    bottom: -4px; /* Position it below the text */
+    left: 0;
+    right: 0;
+    height: 4px; /* Height of the hover box */
+    background-color: #e0e7ff; /* Color of the hover box */
+    transform: scaleX(0); /* Start with no width */
+    transition: transform 0.3s ease; /* Smooth transition */
+    z-index: -1; /* Behind the text */
+  }
+
+  .group:hover .hover-box {
+    transform: scaleX(1); /* Expand the width on hover */
+  }
+
+  .nav-item.active {
+    color: #e0e7ff; /* Light color for active item */
+    font-weight: bold;
+    border-bottom: 2px solid #e0e7ff; /* Underline effect for active route */
+  }
+</style>
+
+<script>
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  menuToggle.addEventListener("click", () => {
+    mobileMenu.classList.toggle("hidden");
+  });
+
+  // Highlight active route (you can dynamically assign the class based on your routing logic)
+  const navItems = document.querySelectorAll(".nav-item");
+  navItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      navItems.forEach((i) => i.classList.remove("active"));
+      item.classList.add("active");
+    });
+  });
+</script>
+
+<router-outlet></router-outlet>

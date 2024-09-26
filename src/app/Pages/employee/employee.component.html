@@ -1,0 +1,265 @@
+<div class="container mx-auto p-6">
+  <!-- Section 1: Employee Table -->
+  <div class="shadow-lg rounded-lg overflow-hidden bg-gray-100 mb-6">
+    <div class="flex justify-between items-center p-4 border-b">
+      <h2 class="text-2xl font-semibold text-gray-800">Employee List</h2>
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition duration-200 ease-in-out"
+        (click)="openModal()"
+      >
+        Add New
+      </button>
+    </div>
+    <table class="min-w-full table-auto bg-white divide-y divide-gray-300">
+      <thead class="bg-gray-800 text-white">
+        <tr>
+          <th class="py-3 px-4 text-left text-sm font-medium">Sr No</th>
+          <th class="py-3 px-4 text-left text-sm font-medium">Name</th>
+          <th class="py-3 px-4 text-left text-sm font-medium">Department</th>
+          <th class="py-3 px-4 text-left text-sm font-medium">Contact No</th>
+          <th class="py-3 px-4 text-left text-sm font-medium">Email ID</th>
+          <th class="py-3 px-4 text-left text-sm font-medium">Role</th>
+          <th class="py-3 px-4 text-center text-sm font-medium">Action</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-700 divide-y divide-gray-200">
+        <tr
+          *ngFor="
+            let item of employeeList.slice(
+              (currentPage - 1) * itemsPerPage,
+              currentPage * itemsPerPage
+            );
+            let i = index
+          "
+          class="hover:bg-gray-300 transition duration-300 cursor-pointer"
+        >
+          <td class="py-4 px-4">
+            {{ (currentPage - 1) * itemsPerPage + i + 1 }}
+          </td>
+          <td class="py-3 px-4 text-sm font-semibold text-gray-800">
+            {{ item.employeeName | uppercase }}
+          </td>
+          <td class="py-4 px-4">{{ item.deptName }}</td>
+          <td class="py-4 px-4">{{ item.contactNo }}</td>
+          <td class="py-4 px-4">{{ item.emailId }}</td>
+          <td class="py-3 px-4 text-sm font-semibold text-gray-800">
+            {{ item.role | uppercase }}
+          </td>
+          <td class="py-4 px-4 text-center">
+            <button
+              (click)="openEditModal(item)"
+              class="bg-yellow-500 text-white font-semibold py-1 px-3 rounded hover:bg-yellow-600 transition duration-200 ease-in-out"
+            >
+              Edit
+            </button>
+            <button
+              (click)="onDeleteEmployee(item.employeeId)"
+              class="bg-red-500 text-white font-semibold py-1 px-3 rounded hover:bg-red-600 transition duration-200 ease-in-out ml-2"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="flex justify-between items-center mt-4">
+    <button
+      class="bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-200 ease-in-out"
+      (click)="previousPage()"
+      [disabled]="currentPage === 1"
+    >
+      Previous
+    </button>
+    <span class="text-lg font-medium"
+      >Page {{ currentPage }} of {{ totalPages }}</span
+    >
+    <button
+      class="bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-200 ease-in-out"
+      (click)="nextPage()"
+      [disabled]="currentPage === totalPages"
+    >
+      Next
+    </button>
+  </div>
+
+  <!-- Modal for Adding/Editing Employee -->
+  <div
+    *ngIf="isModalOpen"
+    class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-8">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-semibold text-gray-800">
+          {{ isEditMode ? "Edit Employee" : "Add New Employee" }}
+        </h2>
+        <button
+          class="text-gray-500 hover:text-gray-700"
+          (click)="closeModal()"
+        >
+          &times;
+        </button>
+      </div>
+
+      <form class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="name" class="block text-gray-700 font-medium mb-2"
+              >Employee Name</label
+            >
+            <input
+              type="text"
+              id="name"
+              name="employeeName"
+              [(ngModel)]="newEmployee.employeeName"
+              class="mt-1 block w-full border border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 ease-in-out h-12 text-lg px-4"
+              placeholder="Enter employee name"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="department" class="block text-gray-700 font-medium mb-2"
+              >Department</label
+            >
+            <select
+              id="department"
+              [(ngModel)]="newEmployee.deptId"
+              name="department"
+              class="mt-1 block w-full border border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 ease-in-out h-12 text-lg px-4"
+              required
+            >
+              <option value="" disabled selected>Select department</option>
+              @for(item of deptList; track $index){
+              <option [value]="item.deptId">
+                {{ item.deptName }}
+              </option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="contactNo" class="block text-gray-700 font-medium mb-2"
+              >Contact No</label
+            >
+            <input
+              type="tel"
+              id="contactNo"
+              name="contactNo"
+              [(ngModel)]="newEmployee.contactNo"
+              class="mt-1 block w-full border border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 ease-in-out h-12 text-lg px-4"
+              placeholder="Enter contact number"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="email" class="block text-gray-700 font-medium mb-2"
+              >Email ID</label
+            >
+            <input
+              type="email"
+              id="email"
+              name="email"
+              [(ngModel)]="newEmployee.emailId"
+              class="mt-1 block w-full border border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 ease-in-out h-12 text-lg px-4"
+              placeholder="Enter email address"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="password" class="block text-gray-700 font-medium mb-2"
+              >Password</label
+            >
+            <input
+              type="password"
+              id="password"
+              name="password"
+              [(ngModel)]="newEmployee.password"
+              class="mt-1 block w-full border border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 ease-in-out h-12 text-lg px-4"
+              placeholder="Enter password"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="role" class="block text-gray-700 font-medium mb-2"
+              >Role</label
+            >
+            <select
+              id="role"
+              name="role"
+              [(ngModel)]="newEmployee.role"
+              class="mt-1 block w-full border border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 ease-in-out h-12 text-lg px-4"
+              required
+            >
+              <option value="" disabled selected>Select role</option>
+              @for(item of roleList; track $index){
+              <option>{{ item }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Gender Radio Buttons -->
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2">Gender</label>
+          <div class="flex items-center space-x-8">
+            <div class="flex items-center">
+              <input
+                type="radio"
+                id="male"
+                name="gender"
+                [(ngModel)]="newEmployee.gender"
+                value="Male"
+                class="mr-2 h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                required
+              />
+              <label for="male" class="text-gray-700 cursor-pointer"
+                >Male</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="radio"
+                id="female"
+                name="gender"
+                [(ngModel)]="newEmployee.gender"
+                value="Female"
+                class="mr-2 h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                required
+              />
+              <label for="female" class="text-gray-700 cursor-pointer"
+                >Female</label
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-center mt-6">
+          <button
+            type="button"
+            class="bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-200 ease-in-out mr-2"
+            (click)="closeModal()"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            (click)="onHandle()"
+            class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition duration-200 ease-in-out"
+          >
+            {{ isEditMode ? "Update" : "Add" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
